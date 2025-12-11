@@ -6,8 +6,15 @@ const ALL_ENGINES = [
   { name: 'google', icon: '../images/google-logo.svg', label: 'googleLabel', url: 'https://www.google.com/search?q=', aliases: ['谷歌'] },
   { name: 'bing', icon: '../images/bing-logo.png', label: 'bingLabel', url: 'https://www.bing.com/search?q=' },
   { name: 'baidu', icon: '../images/baidu-logo.svg', label: 'baiduLabel', url: 'https://www.baidu.com/s?wd=', aliases: ['百度'] },
+  { name: 'baidu_m', icon: '../images/baidu-logo.svg', label: 'baidumLabel', url: 'https://m.baidu.com/s?wd=', aliases: ['百度移动'] },
+  { name: 'toutiao', icon: '../images/toutiao-logo.png', label: 'toutiaoLabel', url: 'https://so.toutiao.com/search?dvpf=pc&keyword=', aliases: ['头条'] },
+  { name: 'sougou', icon: '../images/sougou-logo.png', label: 'sougouLabel', url: 'https://www.sogou.com/web?query=', aliases: ['搜狗'] },
+  { name: '360', icon: '../images/360-logo.png', label: '360Label', url: 'https://www.so.com/s?q=', aliases: ['360'] },
+  { name: 'shenma', icon: '../images/shenma-logo.png', label: 'shenmaLabel', url: 'https://yz.m.sm.cn/s?q=', aliases: ['神马'] },
   { name: 'kimi', icon: '../images/kimi-logo.svg', label: 'kimiLabel', url: 'https://kimi.moonshot.cn/?q=', aliases: ['Kimi'] },
   { name: 'doubao', icon: '../images/doubao-logo.png', label: 'doubaoLabel', url: 'https://www.doubao.com/?q=', aliases: ['豆包'] },
+  { name: 'qwen', icon: '../images/qwen-logo.png', label: 'qwenLabel', url: 'https://www.qianwen.com/chat/?q=', aliases: ['千问'] },
+  { name: 'iflow', icon: '../images/iflow-logo.png', label: 'iflowLabel', url: 'https://iflow.cn/answers/', aliases: ['心流'] },
   { name: 'chatgpt', icon: '../images/chatgpt-logo.svg', label: 'chatgptLabel', url: 'https://chat.openai.com/?q=', aliases: ['ChatGPT'] },
   { name: 'felo', icon: '../images/felo-logo.svg', label: 'feloLabel', url: 'https://felo.ai/search?q=', aliases: ['Felo'] },
   { name: 'metaso', icon: '../images/metaso-logo.png', label: 'metasoLabel', url: 'https://metaso.cn/?q=', aliases: ['Metaso'] },
@@ -28,8 +35,8 @@ const ALL_ENGINES = [
 
 // 定义搜索引擎分类
 const ENGINE_CATEGORIES = {
-  AI: ['kimi', 'doubao', 'chatgpt', 'perplexity', 'claude', 'felo', 'metaso', 'semanticscholar', 'deepseek', 'grok'],
-  SEARCH: ['google', 'bing', 'baidu', 'duckduckgo', 'yahoo', 'yandex'],
+  AI: ['kimi', 'doubao', 'qwen', 'iflow', 'chatgpt', 'perplexity', 'claude', 'felo', 'metaso', 'semanticscholar', 'deepseek', 'grok'],
+  SEARCH: ['google', 'bing', 'baidu', 'baidu_m', 'toutiao', 'sougou', '360', 'shenma', 'duckduckgo', 'yahoo', 'yandex'],
   SOCIAL: ['xiaohongshu', 'jike', 'zhihu', 'douban', 'bilibili', 'github']
 };
 
@@ -95,7 +102,7 @@ const SearchEngineManager = {
         return engine;
       }
     }
-    console.log('[Search] Using fallback engine (Google)');
+    console.log('[Search] Using fallback engine (baidu)');
     return ALL_ENGINES[0]; // 默认返回 Google
   },
 

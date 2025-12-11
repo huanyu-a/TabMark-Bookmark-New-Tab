@@ -2126,3 +2126,211 @@ body .default-folders-tabs.sidebar-expanded {
     border-color: var(--primary-color, #10b981);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
+
+/* 新增的书签分组样式 */
+.folder-group {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.folder-group:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.folder-group-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  position: relative;
+}
+
+.folder-group-title::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 50px;
+  height: 2px;
+  background: #10b981;
+  border-radius: 2px;
+}
+
+.folder-bookmarks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--bookmark-width, 180px), 1fr));
+  gap: 1rem;
+  justify-items: center;
+}
+
+/* 暗色模式适配 */
+[data-theme="dark"] .folder-group {
+  background: rgba(30, 41, 59, 0.9);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .folder-group-title {
+  color: #e2e8f0;
+  border-bottom-color: #334155;
+}
+
+[data-theme="dark"] .folder-group-title::after {
+  background: #10b981;
+}
+
+/* 确保在 bookmarks-list 中 folder-group 垂直堆叠 */
+#bookmarks-list {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+
+#bookmarks-list .folder-group {
+  width: 100%;
+  max-width: none;
+}
+
+/* 保持书签卡片的现有样式 */
+.bookmark-card {
+  width: 100%;
+  max-width: 180px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  min-height: 56px;
+  width: 100%;
+}
+
+.card:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.favicon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.5rem;
+}
+
+.card-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 暗色模式适配 */
+[data-theme="dark"] .card {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .card-title {
+  color: #e2e8f0;
+}
+
+/* 支持不同嵌套层级的样式 */
+.folder-group.depth-0 {
+  border-left: 3px solid #10b981;
+}
+
+.folder-group.depth-1 {
+  border-left: 2px solid #34d399;
+  margin-left: 1rem;
+}
+
+.folder-group.depth-2 {
+  border-left: 1px solid #6ee7b7;
+  margin-left: 2rem;
+}
+
+/* 更深层级 */
+.folder-group.depth-3,
+.folder-group.depth-4,
+.folder-group.depth-5 {
+  margin-left: 3rem;
+  border-left: 1px solid #a7f3d0;
+}
+
+/* 子分组样式 */
+.folder-subgroup {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: rgba(248, 250, 252, 0.7);
+  border-radius: 12px;
+  border: 1px dashed #e2e8f0;
+}
+
+.subgroup-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #4a5568;
+  margin-bottom: 1rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* 暗色模式适配 */
+[data-theme="dark"] .folder-subgroup {
+  background: rgba(30, 41, 59, 0.5);
+  border-color: #374151;
+}
+
+[data-theme="dark"] .subgroup-title {
+  color: #cbd5e1;
+  border-bottom-color: #374151;
+}
+
+/* 根文件夹标题样式 */
+.root-folder-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 2rem 0 1rem 0;
+  padding: 0.5rem 0;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+[data-theme="dark"] .root-folder-title {
+  color: #e2e8f0;
+  border-bottom-color: #4a5563;
+}
+
+/* 扁平化布局样式 */
+.folder-group.flat-layout {
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(10px);
+}
+
+[data-theme="dark"] .folder-group.flat-layout {
+  background: rgba(30, 41, 59, 0.9);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+}

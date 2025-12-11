@@ -285,7 +285,7 @@
     } else if (hostname.includes('doubao.com')) {
       return 'doubao';
     } else {
-      return 'bing';
+      return 'baidu';
     }
   }
 

@@ -2587,7 +2587,7 @@ input:checked+.slider:before {
 /* 移动端适配 */
 @media (max-width: 480px) {
   .search-engine-dropdown {
-    width: calc(100vw - 32px);
+    width: calc(80vw - 30px);
     left: 16px;
     right: 16px;
   }

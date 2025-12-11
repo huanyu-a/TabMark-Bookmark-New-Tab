@@ -307,9 +307,29 @@
         "message": "必应",
         "description": "Bing 搜索引擎标签"
     },
+	"baidumLabel": {
+        "message": "百度移动",
+        "description": "百度移动搜索引擎标签"
+    },
     "baiduLabel": {
         "message": "百度",
         "description": "百度搜索引擎标签"
+    },
+	"toutiaoLabel": {
+        "message": "头条",
+        "description": "头条搜索引擎标签"
+    },
+	"sougouLabel": {
+        "message": "搜狗",
+        "description": "搜狗搜索引擎标签"
+    },
+	"360Label": {
+        "message": "360",
+        "description": "360搜索引擎标签"
+    },
+	"shenmaLabel": {
+        "message": "神马",
+        "description": "神马搜索引擎标签"
     },
     "kimiLabel": {
         "message": "Kimi",
@@ -318,6 +338,14 @@
     "doubaoLabel": {
         "message": "豆包",
         "description": "豆包搜索引擎标签"
+    },
+	"qwenLabel": {
+        "message": "千问",
+        "description": "千问搜索引擎标签"
+    },
+	"iflowLabel": {
+        "message": "心流",
+        "description": "心流搜索引擎标签"
     },
     "chatgptLabel": {
         "message": "ChatGPT",
