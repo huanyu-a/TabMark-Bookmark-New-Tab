@@ -2334,3 +2334,226 @@ body .default-folders-tabs.sidebar-expanded {
   background: rgba(30, 41, 59, 0.9);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
 }
+
+/* 回到顶部按钮 - 环形进度指示器样式 */
+#back-to-top {
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: white !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 20px rgba(93, 173, 226, 0.4) !important;
+  z-index: 1 !important; /* 相对于容器的z-index */
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transform: translateY(20px) scale(0.8) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  font-size: 12px !important;
+  min-width: 50px !important;
+  min-height: 50px !important;
+  max-width: 50px !important;
+  max-height: 50px !important;
+  padding: 0 !important;
+  margin: 30px !important; /* 使用margin来定位而不是绝对定位 */
+  pointer-events: auto !important;
+  overflow: visible !important;
+  background: transparent !important;
+  border: none !important;
+  position: static !important; /* 使用静态定位，由容器控制定位 */
+  /* 针对可能的flex容器或变换影响的额外样式 */
+  -webkit-transform: translateZ(0) !important; /* 启用硬件加速 */
+  -webkit-backface-visibility: hidden !important; /* 防止渲染问题 */
+  -webkit-perspective: 1000 !important; /* 防止渲染问题 */
+  will-change: transform !important;
+  /* 确保不在任何变换容器内被影响 */
+  transform-style: flat !important;
+  /* 确保层叠上下文不会被父元素影响 */
+  isolation: isolate !important;
+}
+
+/* 回到顶部按钮容器 - 固定在右下角 */
+#back-to-top-container {
+  position: fixed !important;
+  bottom: 0 !important;
+  right: 0 !important;
+  z-index: 999999 !important;
+  pointer-events: none !important; /* 容器不接收鼠标事件 */
+  width: auto !important;
+  height: auto !important;
+}
+
+/* 环形进度条背景 */
+#back-to-top::before {
+  content: '';
+  position: absolute !important;
+  width: 100% !important;
+  height: 100% !important;
+  border: 4px solid #F0F0F0 !important;
+  border-radius: 50% !important;
+  box-sizing: border-box !important;
+  z-index: 1 !important; /* 背景层 */
+}
+
+/* 环形进度条前景（动态部分） */
+#back-to-top::after {
+  content: '';
+  position: absolute !important;
+  width: 100% !important;
+  height: 100% !important;
+  border: 4px solid #5DADE2 !important;
+  border-radius: 50% !important;
+  border-right-color: transparent !important;
+  border-bottom-color: transparent !important;
+  border-top-color: transparent !important;
+  box-sizing: border-box !important;
+  transform: rotate(0deg) !important;
+  transition: transform 0.3s ease !important;
+  clip-path: polygon(50% 50%, 100% 0%, 100% 100%, 0% 100%) !important;
+  z-index: 2 !important; /* 前景层 */
+}
+
+/* 显示状态 */
+#back-to-top.show {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) scale(1) !important;
+}
+
+/* 隐藏状态 */
+#back-to-top:not(.show) {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transform: translateY(20px) scale(0.8) !important;
+}
+
+/* 悬停效果 */
+#back-to-top:hover {
+  transform: translateY(0) scale(1.1) !important;
+  box-shadow: 0 6px 25px rgba(93, 173, 226, 0.6) !important;
+}
+
+/* 暗色模式 */
+[data-theme="dark"] #back-to-top::before {
+  border-color: #444 !important;
+}
+
+[data-theme="dark"] #back-to-top::after {
+  border-color: #5DADE2 !important;
+}
+
+[data-theme="dark"] #back-to-top:hover {
+  box-shadow: 0 6px 25px rgba(93, 173, 226, 0.5) !important;
+}
+
+/* SVG图标样式 - 回到顶部箭头图标 */
+#back-to-top svg {
+  width: 22px !important;
+  height: 22px !important;
+  fill: none !important;
+  stroke: #333 !important;
+  stroke-width: 2.5 !important;
+  pointer-events: none !important;
+  position: absolute !important; /* 绝对定位 */
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important; /* 居中定位 */
+  z-index: 3 !important; /* 图标层，低于百分比文本 */
+  transition: all 0.2s ease !important;
+  display: block; /* 默认显示图标，由JavaScript控制 */
+  margin: 0 !important; /* 重置可能的margin影响 */
+  padding: 0 !important; /* 重置可能的padding影响 */
+}
+
+/* 暗色模式下的SVG图标 */
+[data-theme="dark"] #back-to-top svg {
+  stroke: #e0e0e0 !important;
+}
+
+/* 滚动百分比文本样式 - 显示在圆环中心 */
+#scroll-percent {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  color: #333 !important;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-size: 14px !important; /* 增大字体大小 */
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  z-index: 4 !important; /* 百分比文本在最顶层 */
+  pointer-events: none !important;
+  text-shadow: none !important;
+  background: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  display: none; /* 默认隐藏，通过JS控制显示 */
+  opacity: 1 !important;
+  visibility: visible !important;
+  min-width: auto !important; /* 确保不继承其他宽度设置 */
+  min-height: auto !important; /* 确保不继承其他高度设置 */
+}
+
+/* 暗色模式下的百分比文本 */
+[data-theme="dark"] #scroll-percent {
+  color: #e0e0e0 !important;
+}
+
+/* 确保显示状态的百分比文本可见，但仅在需要时 */
+#back-to-top.show #scroll-percent {
+  display: none !important; /* 默认情况下百分比文本是隐藏的，除非JavaScript明确显示它 */
+}
+
+/* 当按钮显示且需要显示百分比时 */
+#back-to-top.show.show-percent #scroll-percent {
+  display: block !important;
+}
+
+#back-to-top.show.show-percent svg {
+  display: none !important;
+}
+
+/* 当按钮显示且需要显示图标时 */
+#back-to-top.show.show-icon svg {
+  display: block !important;
+}
+
+#back-to-top.show.show-icon #scroll-percent {
+  display: none !important;
+}
+
+/* 确保隐藏状态的百分比文本不可见 */
+#back-to-top:not(.show) #scroll-percent {
+  display: none !important;
+}
+
+#back-to-top:not(.show) svg {
+  display: none !important;
+}
+
+/* 根据滚动百分比动态调整进度环 */
+/* 这个类将通过JavaScript动态添加，显示当前滚动进度 */
+.progress-0::after { transform: rotate(0deg) !important; }
+.progress-5::after { transform: rotate(18deg) !important; } /* 5% of 360 = 18deg */
+.progress-10::after { transform: rotate(36deg) !important; } /* 10% of 360 = 36deg */
+.progress-15::after { transform: rotate(54deg) !important; } /* 15% of 360 = 54deg */
+.progress-20::after { transform: rotate(72deg) !important; } /* 20% of 360 = 72deg */
+.progress-25::after { transform: rotate(90deg) !important; } /* 25% of 360 = 90deg */
+.progress-30::after { transform: rotate(108deg) !important; } /* 30% of 360 = 108deg */
+.progress-35::after { transform: rotate(126deg) !important; } /* 35% of 360 = 126deg */
+.progress-40::after { transform: rotate(144deg) !important; } /* 40% of 360 = 144deg */
+.progress-45::after { transform: rotate(162deg) !important; } /* 45% of 360 = 162deg */
+.progress-50::after { transform: rotate(180deg) !important; } /* 50% of 360 = 180deg */
+.progress-55::after { transform: rotate(198deg) !important; } /* 55% of 360 = 198deg */
+.progress-60::after { transform: rotate(216deg) !important; } /* 60% of 360 = 216deg */
+.progress-65::after { transform: rotate(234deg) !important; } /* 65% of 360 = 234deg */
+.progress-70::after { transform: rotate(252deg) !important; } /* 70% of 360 = 252deg */
+.progress-75::after { transform: rotate(270deg) !important; } /* 75% of 360 = 270deg */
+.progress-80::after { transform: rotate(288deg) !important; } /* 80% of 360 = 288deg */
+.progress-85::after { transform: rotate(306deg) !important; } /* 85% of 360 = 306deg */
+.progress-90::after { transform: rotate(324deg) !important; } /* 90% of 360 = 324deg */
+.progress-95::after { transform: rotate(342deg) !important; } /* 95% of 360 = 342deg */
+.progress-100::after { transform: rotate(360deg) !important; } /* 100% of 360 = 360deg */

@@ -3172,6 +3172,9 @@ function displayBookmarkCategories(bookmarkNodes, level, parentUl, parentId) {
     categoriesList.style.display = 'block';
   }
 
+  // 需要默认展开的特定ID（1: 收藏夹栏, 2: 其他收藏夹）
+  const defaultExpandedIds = ['1', '2'];
+  
   bookmarkNodes.forEach(function (bookmark) {
     if (bookmark.children && bookmark.children.length > 0) {
       let li = document.createElement('li');
@@ -3188,18 +3191,34 @@ function displayBookmarkCategories(bookmarkNodes, level, parentUl, parentId) {
       folderIcon.innerHTML = ICONS.folder;
       li.insertBefore(folderIcon, li.firstChild);
 
-      const hasSubfolders = bookmark.children.some(child => child.children);
+      // 检查是否有子文件夹（用于决定是否显示箭头图标）
+      // 对于特定ID的文件夹，只要有一级子文件夹就应该显示箭头图标
+      // 对于其他文件夹，只有当有孙子级文件夹时才显示箭头图标
+      const hasSubfolders = defaultExpandedIds.includes(bookmark.id)
+        ? bookmark.children.some(child => !child.url)  // 有一级子文件夹
+        : bookmark.children.some(child => child.children);  // 有孙子级文件夹
+      
       let arrowIcon;
       if (hasSubfolders) {
         arrowIcon = document.createElement('span');
         arrowIcon.className = 'material-icons ml-auto';
-        arrowIcon.innerHTML = ICONS.chevron_right;
+        // 只有特定ID的一级导航默认展开，显示向下箭头
+        if (defaultExpandedIds.includes(bookmark.id)) {
+          arrowIcon.innerHTML = ICONS.expand_less;
+        } else {
+          arrowIcon.innerHTML = ICONS.chevron_right;
+        }
         li.appendChild(arrowIcon);
       }
 
       let sublist = document.createElement('ul');
       sublist.className = 'pl-4 space-y-2';
-      sublist.style.display = 'none';
+      // 只有特定ID的一级导航默认展开
+      if (defaultExpandedIds.includes(bookmark.id)) {
+        sublist.style.display = 'block';
+      } else {
+        sublist.style.display = 'none';
+      }
 
       li.addEventListener('click', function (event) {
         event.stopPropagation();
@@ -3215,6 +3234,27 @@ function displayBookmarkCategories(bookmarkNodes, level, parentUl, parentId) {
           item.classList.remove('bg-emerald-500');
         });
         li.classList.add('bg-emerald-500');
+
+        // 检查是否是特殊文件夹ID（1: 收藏夹栏, 2: 其他收藏夹）
+        const folderId = bookmark.id;
+        if (folderId === '1' || folderId === '2') {
+          // 查找对应的文件夹组元素
+          const folderGroupId = `folder-group-${folderId}-recommended`;
+          const folderGroupElement = document.getElementById(folderGroupId);
+          
+          if (folderGroupElement) {
+            // 滚动到文件夹组元素
+            folderGroupElement.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+            console.log(`已滚动到文件夹组: ${folderGroupId}`);
+          } else {
+            console.warn(`未找到文件夹组元素: ${folderGroupId}`);
+          }
+          // 对于特殊文件夹，不调用updateBookmarksDisplay，避免重新渲染
+          return;
+        }
 
         updateBookmarksDisplay(bookmark.id);
       });
@@ -6508,6 +6548,346 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // 其他初始化代码...
   startPeriodicSync();
+});
+
+// 回到顶部按钮功能
+function initBackToTop() {
+  const backToTopBtn = document.getElementById('back-to-top');
+  const scrollPercentElement = document.getElementById('scroll-percent');
+  // 直接通过ID获取SVG元素，而不是通过querySelector
+  const svgElement = backToTopBtn.querySelector('svg');
+  
+  if (!backToTopBtn) {
+    console.error('Back to top button NOT found!');
+    // 如果按钮不存在，稍后重试
+    setTimeout(initBackToTop, 100);
+    return;
+  }
+  
+  console.log('Back to top button found, initializing...', {
+    backToTopBtn: !!backToTopBtn,
+    scrollPercentElement: !!scrollPercentElement,
+    svgElement: !!svgElement
+  });
+  
+  let scrollTimeout;
+  
+  // 简化滚动事件监听器，不使用节流以确保响应性
+  function handleScroll() {
+    // 尝试获取最可能的滚动容器
+    let scrollContainer = document.getElementById('bookmarks-list');
+    
+    // 如果书签列表不存在或不可滚动，尝试 main 元素
+    if (!scrollContainer || (scrollContainer.scrollHeight <= scrollContainer.clientHeight)) {
+      scrollContainer = document.querySelector('main');
+    }
+    
+    // 如果 main 元素也不存在或不可滚动，尝试 .bookmarks-container
+    if (!scrollContainer || (scrollContainer.scrollHeight <= scrollContainer.clientHeight)) {
+      scrollContainer = document.querySelector('.bookmarks-container');
+    }
+    
+    // 如果以上都不可滚动，尝试任何带有 overflow-auto 或 overflow-y-auto 的元素
+    if (!scrollContainer || (scrollContainer.scrollHeight <= scrollContainer.clientHeight)) {
+      scrollContainer = document.querySelector('.overflow-auto, .overflow-y-auto');
+    }
+    
+    let scrollPosition = 0;
+    let maxScroll = 0;
+    let scrollPercentage = 0;
+    
+    if (scrollContainer) {
+      // 使用滚动容器的滚动位置
+      scrollPosition = scrollContainer.scrollTop;
+      maxScroll = scrollContainer.scrollHeight - scrollContainer.clientHeight;
+      
+      // 计算滚动百分比，限制在0-100之间
+      if (maxScroll > 0) {
+        scrollPercentage = Math.round((scrollPosition / maxScroll) * 100);
+        scrollPercentage = Math.min(scrollPercentage, 100); // 限制最大值为100
+      } else {
+        scrollPercentage = 0; // 如果没有可滚动内容，百分比为0
+      }
+    } else {
+      // 备用：使用页面滚动位置
+      scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+      maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      
+      if (maxScroll > 0) {
+        scrollPercentage = Math.round((scrollPosition / maxScroll) * 100);
+        scrollPercentage = Math.min(scrollPercentage, 100);
+      } else {
+        scrollPercentage = 0;
+      }
+    }
+    
+    console.log('Scroll event - Percentage:', scrollPercentage, 'Position:', scrollPosition, 'Max:', maxScroll);
+    
+    // 显示百分比文本，隐藏SVG图标（在滚动过程中）
+    if (scrollPercentElement) {
+      scrollPercentElement.textContent = scrollPercentage + '%';
+      // 使用CSS类控制显示状态
+      backToTopBtn.classList.remove('show-icon');
+      backToTopBtn.classList.add('show-percent');
+      console.log('Showing percentage:', scrollPercentage + '%');
+    }
+    
+    if (svgElement) {
+      // 使用CSS类控制显示状态
+      backToTopBtn.classList.remove('show-icon'); // 移除图标显示类
+      backToTopBtn.classList.add('show-percent'); // 添加百分比显示类
+      console.log('Hiding SVG icon');
+    }
+    
+    // 在滚动时立即更新环形进度条
+    if (scrollPercentage !== 0) {
+      // 移除之前的进度类
+      const progressClasses = Array.from(backToTopBtn.classList).filter(cls => cls.startsWith('progress-'));
+      progressClasses.forEach(cls => backToTopBtn.classList.remove(cls));
+      // 添加新的进度类
+      backToTopBtn.classList.add(`progress-${scrollPercentage}`);
+    }
+    
+    console.log('Scroll position:', scrollPosition, 'Max scroll:', maxScroll, 'Percentage:', scrollPercentage, 'Container:', scrollContainer ? scrollContainer.tagName + '.' + (scrollContainer.className || scrollContainer.id) : 'none');
+    
+    // 使用较小的阈值
+    const threshold = 50; // 使用50px作为阈值
+    
+    if (scrollPosition > threshold) {  
+      backToTopBtn.classList.add('show');
+      console.log('Show back to top button (scroll threshold)');
+    } else {
+      backToTopBtn.classList.remove('show');
+      console.log('Hide back to top button (scroll threshold)');
+    }
+    
+    // 清除之前的定时器
+    clearTimeout(scrollTimeout);
+    
+    // 设置定时器，在滚动停止3秒后显示回到顶部图标，隐藏百分比
+    scrollTimeout = setTimeout(() => {
+      if (scrollPercentElement) {
+        // 使用CSS类控制显示状态
+        backToTopBtn.classList.remove('show-percent');
+        backToTopBtn.classList.add('show-icon');
+        console.log('Hiding percentage after scroll stop');
+      }
+      if (svgElement) {
+        // 使用CSS类控制显示状态
+        backToTopBtn.classList.remove('show-percent');
+        backToTopBtn.classList.add('show-icon');
+        console.log('Showing SVG icon after scroll stop');
+      }
+      // 移除之前的进度类
+      const progressClasses = Array.from(backToTopBtn.classList).filter(cls => cls.startsWith('progress-'));
+      progressClasses.forEach(cls => backToTopBtn.classList.remove(cls));
+      
+      // 确保此时显示的是SVG图标而不是百分比
+      backToTopBtn.classList.remove('show-percent');
+      backToTopBtn.classList.add('show-icon');
+    }, 3000); // 3秒后切换回回到顶部图标
+  }
+
+  // 添加一个函数来尝试添加滚动监听器
+  function setupScrollListener() {
+    // 尝试找到最可能的滚动容器
+    let scrollContainer = document.getElementById('bookmarks-list');
+    
+    if (!scrollContainer || (scrollContainer.scrollHeight <= scrollContainer.clientHeight)) {
+      scrollContainer = document.querySelector('main');
+    }
+    
+    if (!scrollContainer || (scrollContainer.scrollHeight <= scrollContainer.clientHeight)) {
+      scrollContainer = document.querySelector('.bookmarks-container');
+    }
+    
+    if (!scrollContainer || (scrollContainer.scrollHeight <= scrollContainer.clientHeight)) {
+      scrollContainer = document.querySelector('.overflow-auto, .overflow-y-auto');
+    }
+    
+    if (scrollContainer) {
+      // 移除可能已存在的事件监听器，避免重复
+      scrollContainer.removeEventListener('scroll', handleScroll);
+      // 添加滚动事件监听器
+      scrollContainer.addEventListener('scroll', handleScroll);
+      console.log('Added scroll listener to container:', scrollContainer.tagName + '.' + (scrollContainer.className || scrollContainer.id));
+      
+      // 立即检查一次当前滚动位置
+      handleScroll();
+      
+      return true;
+    }
+    return false;
+  }
+  
+  // 尝试立即设置监听器
+  if (!setupScrollListener()) {
+    console.log('Could not find scroll container immediately, will retry periodically');
+    // 如果立即设置失败，定期尝试直到成功
+    const intervalId = setInterval(() => {
+      if (setupScrollListener()) {
+        clearInterval(intervalId);
+        console.log('Successfully added scroll listener after delay');
+      }
+    }, 500);
+    
+    // 设置一个最大等待时间（10秒）
+    setTimeout(() => {
+      clearInterval(intervalId);
+    }, 10000);
+  }
+  
+  // 也监听resize事件，以防页面内容动态变化
+  window.addEventListener('resize', handleScroll);
+
+  // 点击按钮时滚动到顶部
+  backToTopBtn.addEventListener('click', function() {
+    console.log('Back to top button clicked!');
+    
+    // 尝试找到当前实际的滚动容器
+    let scrollContainer = document.getElementById('bookmarks-list');
+    
+    if (!scrollContainer || (scrollContainer.scrollHeight <= scrollContainer.clientHeight)) {
+      scrollContainer = document.querySelector('main');
+    }
+    
+    if (!scrollContainer || (scrollContainer.scrollHeight <= scrollContainer.clientHeight)) {
+      scrollContainer = document.querySelector('.bookmarks-container');
+    }
+    
+    if (!scrollContainer || (scrollContainer.scrollHeight <= scrollContainer.clientHeight)) {
+      scrollContainer = document.querySelector('.overflow-auto, .overflow-y-auto');
+    }
+    
+    if (scrollContainer) {
+      // 滚动特定容器到顶部
+      scrollContainer.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    } else {
+      // 备用：滚动页面到顶部
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  });
+  
+  // 页面加载时确保显示SVG图标（非滚动状态）
+  if (svgElement) {
+    // 使用CSS类控制显示状态
+    backToTopBtn.classList.remove('show-percent');
+    backToTopBtn.classList.add('show-icon');
+    backToTopBtn.classList.add('show'); // 确保按钮可见
+    console.log('Initial: Showing SVG icon');
+  }
+  if (scrollPercentElement) {
+    // 使用CSS类控制显示状态
+    backToTopBtn.classList.remove('show-percent');
+    backToTopBtn.classList.add('show-icon');
+    console.log('Initial: Hiding percentage text');
+  }
+  
+  // 确保在任何情况下都有正确的默认显示状态
+  setTimeout(() => {
+    if (svgElement) {
+      backToTopBtn.classList.remove('show-percent');
+      backToTopBtn.classList.add('show-icon');
+      backToTopBtn.classList.add('show');
+    }
+  }, 500); // 在初始化后稍作延迟再次确认状态
+}
+
+// 确保在页面完全加载后初始化功能
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOM content loaded, initializing back to top button...');
+  // 延迟一下以确保所有元素都已渲染
+  setTimeout(() => {
+    console.log('About to call initBackToTop function...');
+    initBackToTop();
+  }, 100);
+});
+
+// 作为备用方案，在所有资源加载完成后再次尝试
+window.addEventListener('load', function() {
+  console.log('Window loaded, initializing back to top button...');
+  setTimeout(() => {
+    const backToTopBtn = document.getElementById('back-to-top');
+    if (backToTopBtn && backToTopBtn.classList.length === 0) {
+      initBackToTop();
+    }
+  }, 100);
+});
+
+// 点击logo标题回到页面顶端的功能
+function initLogoTitleScrollToTop() {
+  const logoTitle = document.getElementById('logo-title');
+  
+  if (!logoTitle) {
+    console.log('Logo title element not found, will retry...');
+    setTimeout(initLogoTitleScrollToTop, 100);
+    return;
+  }
+  
+  console.log('Logo title element found, adding click event listener...');
+  
+  logoTitle.addEventListener('click', function() {
+    console.log('Logo title clicked, scrolling to top...');
+    
+    // 尝试找到当前实际的滚动容器
+    let scrollContainer = document.getElementById('bookmarks-list');
+    
+    if (!scrollContainer || (scrollContainer.scrollHeight <= scrollContainer.clientHeight)) {
+      scrollContainer = document.querySelector('main');
+    }
+    
+    if (!scrollContainer || (scrollContainer.scrollHeight <= scrollContainer.clientHeight)) {
+      scrollContainer = document.querySelector('.bookmarks-container');
+    }
+    
+    if (!scrollContainer || (scrollContainer.scrollHeight <= scrollContainer.clientHeight)) {
+      scrollContainer = document.querySelector('.overflow-auto, .overflow-y-auto');
+    }
+    
+    if (scrollContainer) {
+      // 使用平滑滚动效果
+      scrollContainer.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+      console.log('Scrolled container to top:', scrollContainer.tagName + '.' + (scrollContainer.className || scrollContainer.id));
+    } else {
+      // 备用：滚动整个页面
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+      console.log('Scrolled window to top');
+    }
+  });
+  
+  // 添加鼠标悬停效果提示
+  logoTitle.style.cursor = 'pointer';
+  logoTitle.title = '点击回到页面顶端';
+}
+
+// 在DOM加载完成后初始化logo标题点击功能
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOM content loaded, initializing logo title scroll to top...');
+  setTimeout(initLogoTitleScrollToTop, 100);
+});
+
+// 作为备用方案，在页面完全加载后再次尝试
+window.addEventListener('load', function() {
+  console.log('Window loaded, checking logo title scroll to top...');
+  setTimeout(() => {
+    const logoTitle = document.getElementById('logo-title');
+    if (logoTitle && !logoTitle.hasAttribute('data-scroll-initialized')) {
+      logoTitle.setAttribute('data-scroll-initialized', 'true');
+      initLogoTitleScrollToTop();
+    }
+  }, 100);
 });
 
 
