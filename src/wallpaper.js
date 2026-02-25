@@ -43,44 +43,52 @@ class WallpaperManager {
     initializePresetWallpapers() {
         this.presetWallpapers = [
             {
-                url: './../images/wallpapers/wallpaper-1.jpg',
+                url: './../images/wallpapers/wallpaper-1.png',
                 title: 'Foggy Forest'
             },
             {
-                url: './../images/wallpapers/wallpaper-2.jpg',
+                url: './../images/wallpapers/wallpaper-2.png',
                 title: 'Mountain Lake'
             },
             {
-                url: './../images/wallpapers/wallpaper-3.jpg',
+                url: './../images/wallpapers/wallpaper-3.png',
                 title: 'Sunset Beach'
             },
             {
-                url: '../images/wallpapers/wallpaper-4.jpg',
+                url: '../images/wallpapers/wallpaper-4.png',
                 title: 'City Night'
             },
             {
-                url: './../images/wallpapers/wallpaper-5.jpg',
+                url: './../images/wallpapers/wallpaper-5.png',
                 title: 'Aurora'
             },
             {
-                url: './../images/wallpapers/wallpaper-6.jpg',
+                url: './../images/wallpapers/wallpaper-6.png',
                 title: 'Desert Dunes'
             },
             {
-                url: './../images/wallpapers/wallpaper-7.jpg',
+                url: './../images/wallpapers/wallpaper-7.png',
                 title: 'Mountain View'
             },
             {
-                url: './../images/wallpapers/wallpaper-8.jpg',
+                url: './../images/wallpapers/wallpaper-8.png',
                 title: 'Forest Lake'
             },
             {
-                url: './../images/wallpapers/wallpaper-9.jpg',
+                url: './../images/wallpapers/wallpaper-9.png',
                 title: 'Sunset Hills'
             },
             {
-                url: './../images/wallpapers/wallpaper-10.jpg',
+                url: './../images/wallpapers/wallpaper-10.png',
                 title: 'Ocean View'
+            },
+            {
+                url: './../images/wallpapers/wallpaper-11.jpg',
+                title: 'Ocean View1'
+            },
+            {
+                url: './../images/wallpapers/wallpaper-12.jpg',
+                title: 'Ocean View2'
             }
         ];
     }

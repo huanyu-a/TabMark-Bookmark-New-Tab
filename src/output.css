@@ -953,7 +953,7 @@ aside {
   flex-direction: column;
   align-items: flex-start; /* Align content to the start for tree structure */
   width: 16%; /* Adjusted width */
-  background-color: #ffffff; /* 设置背景颜色为与主体一致 */
+  background-color: #ffffffa8; /* 设置背景颜色为与主体一致 */
   transition: width 0.3s; /* Smooth transition for width */
   overflow: auto; /* Allow scrolling for overflow content */
 }
@@ -1728,7 +1728,7 @@ img.w-6.h-6.mr-2 {
 .bookmarks-container {
   opacity: 0; /* 初始透明度设为 0 */
   transition: opacity 0.3s ease-out, transform 0.3s ease-out;
-  background: #ffffff;
+  background: #ffffff6b;
   padding: 1rem 2rem 2rem 2rem;
   width: 85%;
   max-width: 1200px;
